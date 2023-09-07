@@ -6,13 +6,13 @@ var usersRoutes = []Route{
 	{
 		URI:         "/users",
 		Method:      "GET",
-		HandlerFunc: controllers.GetUser,
+		HandlerFunc: controllers.GetUsers,
 		RequireAuth: false,
 	},
 	{
 		URI:         "/users/{id}",
 		Method:      "GET",
-		HandlerFunc: controllers.GetUsers,
+		HandlerFunc: controllers.GetUser,
 		RequireAuth: false,
 	},
 	{
