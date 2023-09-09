@@ -7,13 +7,13 @@ var usersRoutes = []Route{
 		URI:         "/users",
 		Method:      "GET",
 		HandlerFunc: controllers.GetUsers,
-		RequireAuth: false,
+		RequireAuth: true,
 	},
 	{
 		URI:         "/users/{id}",
 		Method:      "GET",
 		HandlerFunc: controllers.GetUser,
-		RequireAuth: false,
+		RequireAuth: true,
 	},
 	{
 		URI:         "/users",
@@ -25,12 +25,12 @@ var usersRoutes = []Route{
 		URI:         "/users/{id}",
 		Method:      "PUT",
 		HandlerFunc: controllers.UpdateUser,
-		RequireAuth: false,
+		RequireAuth: true,
 	},
 	{
 		URI:         "/users/{id}",
 		Method:      "DELETE",
 		HandlerFunc: controllers.DeleteUser,
-		RequireAuth: false,
+		RequireAuth: true,
 	},
 }

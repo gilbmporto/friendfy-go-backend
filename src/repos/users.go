@@ -38,7 +38,7 @@ func (rep users) Create(user models.User) (uint64, error) {
 func (rep users) Get(nameOrNick string) ([]models.User, error) {
 	nameOrNick = fmt.Sprintf("%%%s%%", nameOrNick) // LIKE %nameOrNick%
 
-	rows, err := rep.db.Query("SELECT id, name, nick, email, created_at FROM users WHERE name LIKE ? OR nick LIKE? ", nameOrNick, nameOrNick)
+	rows, err := rep.db.Query("SELECT id, name, nick, email, created_at FROM users WHERE name LIKE ? OR nick LIKE ?", nameOrNick, nameOrNick)
 	if err != nil {
 		return nil, err
 	}
@@ -49,17 +49,16 @@ func (rep users) Get(nameOrNick string) ([]models.User, error) {
 	for rows.Next() {
 		var user models.User
 
-		if rows.Next() {
-			err := rows.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			// No row found
-			return nil, sql.ErrNoRows
+		err := rows.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt)
+		if err != nil {
+			return nil, err
 		}
 
 		users = append(users, user)
+
+		if len(users) == 0 {
+			return nil, sql.ErrNoRows
+		}
 	}
 
 	return users, nil

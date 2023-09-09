@@ -3,6 +3,8 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
+	"friendfy-api/src/auth"
 	"friendfy-api/src/db"
 	"friendfy-api/src/models"
 	"friendfy-api/src/repos"
@@ -120,6 +122,18 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userIdInToken, err := auth.ExtractUserIDFromToken(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	// Only the user who created the user can update it
+	if userID != userIdInToken {
+		responses.Error(w, http.StatusForbidden, errors.New("you are not authorized to update this user"))
+		return
+	}
+
 	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		responses.Error(w, http.StatusUnprocessableEntity, err)
@@ -159,6 +173,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseUint(params["id"], 10, 64)
 	if err != nil {
 		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userIdInToken, err := auth.ExtractUserIDFromToken(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID != userIdInToken {
+		responses.Error(w, http.StatusForbidden, errors.New("you are not authorized to delete this user"))
 		return
 	}
 
