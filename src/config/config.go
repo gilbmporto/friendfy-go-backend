@@ -15,6 +15,9 @@ var (
 
 	// The Port is the port that the server will listen on.
 	Port = 0
+
+	// SecretKey is the key to sign the JWT token.
+	SecretKey []byte
 )
 
 func Setup() {
@@ -34,5 +37,7 @@ func Setup() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 
 }

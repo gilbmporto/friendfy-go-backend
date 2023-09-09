@@ -113,3 +113,21 @@ func (rep users) Delete(id uint64) error {
 
 	return nil
 }
+
+func (rep users) SearchByEmail(email string) (models.User, error) {
+	row, err := rep.db.Query("SELECT id, password FROM users WHERE email = ?", email)
+	if err != nil {
+		return models.User{}, err
+	}
+	defer row.Close()
+
+	var user models.User
+	if row.Next() {
+		err := row.Scan(&user.ID, &user.Password)
+		if err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return user, nil
+}
