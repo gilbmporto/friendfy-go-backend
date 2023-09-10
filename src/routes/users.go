@@ -45,4 +45,10 @@ var usersRoutes = []Route{
 		HandlerFunc: controllers.UnfollowUser,
 		RequireAuth: true,
 	},
+	{
+		URI:         "/users/{id}/followers",
+		Method:      "GET",
+		HandlerFunc: controllers.SearchFollowers,
+		RequireAuth: true,
+	},
 }

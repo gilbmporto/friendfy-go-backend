@@ -158,3 +158,35 @@ func (rep users) Unfollow(userID uint64, followerID uint64) error {
 
 	return nil
 }
+
+func (rep users) SearchFollowers(userID uint64) ([]models.User, error) {
+
+	// Here down below is how we get the info of all the followers of a specific user
+	rows, err := rep.db.Query(`
+		SELECT u.id, u.name, u.nick, u.email, u.created_at 
+		FROM users u inner join followers f on u.id = f.follower_id where f.user_id = ?
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.User
+
+	for rows.Next() {
+		var user models.User
+
+		err := rows.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+
+		if len(users) == 0 {
+			return nil, sql.ErrNoRows
+		}
+	}
+
+	return users, nil
+}
