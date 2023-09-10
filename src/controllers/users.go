@@ -202,3 +202,75 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	responses.JSON(w, http.StatusNoContent, nil)
 }
+
+func FollowUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	userID, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userIdInToken, err := auth.ExtractUserIDFromToken(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID == userIdInToken {
+		responses.Error(w, http.StatusForbidden, errors.New("you cannot follow yourself"))
+		return
+	}
+
+	db, err := db.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	usersRepo := repos.NewRepositoryOfUsers(db)
+	if err = usersRepo.Follow(userID, userIdInToken); err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
+}
+
+func UnfollowUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	userID, err := strconv.ParseUint(params["id"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userIdInToken, err := auth.ExtractUserIDFromToken(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userID == userIdInToken {
+		responses.Error(w, http.StatusForbidden, errors.New("you cannot follow yourself"))
+		return
+	}
+
+	db, err := db.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	usersRepo := repos.NewRepositoryOfUsers(db)
+	if err = usersRepo.Unfollow(userID, userIdInToken); err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
+}

@@ -33,4 +33,16 @@ var usersRoutes = []Route{
 		HandlerFunc: controllers.DeleteUser,
 		RequireAuth: true,
 	},
+	{
+		URI:         "/users/{id}/follow",
+		Method:      "POST",
+		HandlerFunc: controllers.FollowUser,
+		RequireAuth: true,
+	},
+	{
+		URI:         "/users/{id}/unfollow",
+		Method:      "POST",
+		HandlerFunc: controllers.UnfollowUser,
+		RequireAuth: true,
+	},
 }
