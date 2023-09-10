@@ -190,3 +190,34 @@ func (rep users) SearchFollowers(userID uint64) ([]models.User, error) {
 
 	return users, nil
 }
+
+func (rep users) GetFollowingUsers(userID uint64) ([]models.User, error) {
+
+	rows, err := rep.db.Query(`
+		SELECT u.id, u.name, u.nick, u.email, u.created_at 
+    FROM users u inner join followers f on u.id = f.user_id where f.follower_id = ?
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []models.User
+
+	for rows.Next() {
+		var user models.User
+
+		err := rows.Scan(&user.ID, &user.Name, &user.Nick, &user.Email, &user.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+
+		if len(users) == 0 {
+			return nil, sql.ErrNoRows
+		}
+	}
+
+	return users, nil
+}
