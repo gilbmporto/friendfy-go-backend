@@ -221,3 +221,35 @@ func (rep users) GetFollowingUsers(userID uint64) ([]models.User, error) {
 
 	return users, nil
 }
+
+func (rep users) SearchPassword(followerID uint64) (string, error) {
+	row, err := rep.db.Query("SELECT password FROM users WHERE id = ?", followerID)
+	if err != nil {
+		return "", err
+	}
+	defer row.Close()
+
+	var user models.User
+	if row.Next() {
+		err := row.Scan(&user.Password)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return user.Password, nil
+}
+
+func (rep users) UpdatePassword(userID uint64, password string) error {
+	statement, err := rep.db.Prepare("UPDATE users SET password = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(password, userID); err != nil {
+		return err
+	}
+
+	return nil
+}

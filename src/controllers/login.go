@@ -39,7 +39,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err = security.VerifyHash(user.Password, userSavedInDB.Password); err != nil {
+	if err = security.VerifyHash(userSavedInDB.Password, user.Password); err != nil {
 		responses.Error(w, http.StatusUnauthorized, err)
 		return
 	}
