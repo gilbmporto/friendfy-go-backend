@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"strings"
+	"time"
+)
 
 type Post struct {
 	ID         uint64    `json:"id,omitempty"`
@@ -10,4 +14,32 @@ type Post struct {
 	AuthorNick string    `json:"author_nick,omitempty"`
 	Likes      uint64    `json:"likes"`
 	CreatedAt  time.Time `json:"created_at,omitempty"`
+}
+
+func (p *Post) Prepare() error {
+	if err := p.Validate(); err != nil {
+		return err
+	}
+
+	p.Format()
+
+	return nil
+}
+
+func (p *Post) Validate() error {
+	if p.Title == "" {
+		return errors.New("title is required")
+	}
+
+	if p.Content == "" {
+		return errors.New("content is required")
+	}
+
+	return nil
+}
+
+func (p *Post) Format() {
+	p.CreatedAt = time.Now()
+	p.Title = strings.TrimSpace(p.Title)
+	p.Content = strings.TrimSpace(p.Content)
 }

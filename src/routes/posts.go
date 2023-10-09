@@ -22,13 +22,13 @@ var postsRoutes = []Route{
 		RequireAuth: true,
 	},
 	{
-		URI:         "/posts",
+		URI:         "/posts/{id}",
 		Method:      "PUT",
 		HandlerFunc: controllers.UpdatePost,
 		RequireAuth: true,
 	},
 	{
-		URI:         "/posts",
+		URI:         "/posts/{id}",
 		Method:      "DELETE",
 		HandlerFunc: controllers.DeletePost,
 		RequireAuth: true,
