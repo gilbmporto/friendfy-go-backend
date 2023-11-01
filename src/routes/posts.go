@@ -33,4 +33,22 @@ var postsRoutes = []Route{
 		HandlerFunc: controllers.DeletePost,
 		RequireAuth: true,
 	},
+	{
+		URI:         "/users/{user_id}/posts",
+		Method:      "GET",
+		HandlerFunc: controllers.GetUserPosts,
+		RequireAuth: true,
+	},
+	{
+		URI:         "/posts/{post_id}/like",
+		Method:      "POST",
+		HandlerFunc: controllers.LikePost,
+		RequireAuth: true,
+	},
+	{
+		URI:         "/posts/{post_id}/dislike",
+		Method:      "POST",
+		HandlerFunc: controllers.DislikePost,
+		RequireAuth: true,
+	},
 }
